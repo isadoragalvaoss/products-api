@@ -15,6 +15,7 @@ exports.addToCart = async (req, res) => {
   try {
     const cartRef = db.ref("cart").push();
     const cart = {
+      id: cartRef.key,
       productId: req.body.productId,
       name: req.body.name,
       quant: req.body.quant,
@@ -31,9 +32,9 @@ exports.updateCart = async (req, res) => {
   const { id } = req.params;
   const { quant } = req.body;
 
-  const cartRed = db.ref(`cart/${id}`);
+  const cartRef = db.ref(`cart/${id}`);
 
-  cartRed
+  cartRef
     .update({ quant })
     .then(() => {
       res.status(200).send({ message: "Cart updated." });
@@ -47,9 +48,9 @@ exports.updateCart = async (req, res) => {
 exports.removeFromCart = async (req, res) => {
   const { id } = req.params;
 
-  const cartRed = db.ref(`cart/${id}`);
+  const cartRef = db.ref(`cart/${id}`);
 
-  cartRed
+  cartRef
     .remove()
     .then(() => {
       res.status(200).send({ message: "Item removed from cart." });
@@ -57,5 +58,19 @@ exports.removeFromCart = async (req, res) => {
     .catch((error) => {
       console.error(error);
       res.status(500).send({ message: "Error removing item from cart." });
+    });
+};
+
+exports.removeAllFromCart = async (req, res) => {
+  const cartRef = db.ref("cart");
+
+  cartRef
+    .remove()
+    .then(() => {
+      res.status(200).send({ message: "The purchase was successful!" });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send({ message: "Error while purchasing" });
     });
 };
